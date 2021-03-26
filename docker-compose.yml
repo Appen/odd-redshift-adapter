@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+
+  adapter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      # Cache refreshing interval (minutes):
+      - SCHEDULER_INTERVAL_MINUTES=60
+      # Redshift (with PostgreSQL driver):
+      # https://www.postgresql.org/docs/current/libpq-envars.html
+      # 33.14. Environment Variables
+      # PGHOST behaves the same as the host connection parameter.
+      - PGHOST=...redshift.amazonaws.com
+      # PGHOSTADDR behaves the same as the hostaddr connection parameter.
+      # This can be set instead of or in addition to PGHOST to avoid DNS lookup overhead.
+      # PGPORT behaves the same as the port connection parameter.
+      - PGPORT=5439
+      # PGDATABASE behaves the same as the dbname connection parameter.
+      - PGDATABASE=oddadapter
+      # PGUSER behaves the same as the user connection parameter.
+      - PGUSER=oddadapter
+      # PGPASSWORD behaves the same as the password connection parameter.
+      # Use of this environment variable is not recommended for security reasons,
+      # as some operating systems allow non-root users to see process environment variables via ps;
+      # instead consider using a password file (see Section 33.15).
+      - PGPASSWORD=odd-adapter-password
+      # FLASK:
+      - FLASK_ENVIRONMENT=development
+    ports:
+      - 8080:8080

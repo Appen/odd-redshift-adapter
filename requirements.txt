@@ -1,0 +1,7 @@
+--extra-index-url https://test.pypi.org/simple/
+gunicorn==20.0.4
+flask==1.1.2
+apscheduler==3.7.0
+pytz==2021.1
+psycopg2-binary==2.8.6
+odd-contract-dev==0.0.22

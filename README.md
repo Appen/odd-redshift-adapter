@@ -1,0 +1,1 @@
+# OpenDataDiscovery Redshift adapter
