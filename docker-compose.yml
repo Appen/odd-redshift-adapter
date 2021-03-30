@@ -11,6 +11,8 @@ services:
       # Cache refreshing interval (minutes):
       - SCHEDULER_INTERVAL_MINUTES=60
       # Redshift (with PostgreSQL driver):
+      - ODD_DATA_SOURCE_NAME=...redshift.amazonaws.com
+      - ODD_DATA_SOURCE=postgresql://
       # https://www.postgresql.org/docs/current/libpq-envars.html
       # 33.14. Environment Variables
       # PGHOST behaves the same as the host connection parameter.

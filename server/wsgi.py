@@ -1,13 +1,11 @@
 import os
 from logging.config import dictConfig
-
 from flask import Response
 from odd_contract import init_flask_app, init_controller
-
-from adapter import RedshiftAdapter
-from cache import RedshiftDataCache
-from controllers import OpenDataDiscoveryController
-from scheduler import Scheduler
+from adapter.adapter import create_adapter
+from app.cache import Cache
+from app.controller import Controller
+from app.scheduler import Scheduler
 
 dictConfig({
     'version': 1,
@@ -30,21 +28,16 @@ def create_app(conf):
     app = init_flask_app()
     app.config.from_object(conf)
 
-    app.add_url_rule("/health", "healthcheck", lambda: Response(status=200))
+    app.add_url_rule('/health', 'healthcheck', lambda: Response(status=200))
 
-    redshift_data_cache = RedshiftDataCache()
+    cache = Cache()
+    adapter = create_adapter(app.config['ODD_DATA_SOURCE_NAME'], app.config['ODD_DATA_SOURCE'])
+    init_controller(Controller(adapter, cache))
 
-    init_controller(
-        OpenDataDiscoveryController(host_name=app.config["PGHOST"], redshift_data_cache=redshift_data_cache)
-    )
-
+    cache_refresh_interval: int = int(app.config['SCHEDULER_INTERVAL_MINUTES'])
     with app.app_context():
-        Scheduler(
-            redshift_adapter=RedshiftAdapter(app.config["PGHOST"]),
-            redshift_data_cache=redshift_data_cache
-        ).start_scheduler(interval_minutes=int(app.config["SCHEDULER_INTERVAL_MINUTES"]))
-
+        Scheduler(adapter, cache).start_scheduler(cache_refresh_interval)
         return app
 
 
-application = create_app(os.environ.get("FLASK_CONFIG") or "config.DevelopmentConfig")
+application = create_app(os.environ.get('FLASK_CONFIG') or 'config.DevelopmentConfig')
