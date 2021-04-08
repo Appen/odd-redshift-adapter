@@ -21,15 +21,22 @@ _data_set_metadata_schema_url_function: str = _METADATA_SCHEMA_URL_PREFIX + 'Dat
 _data_set_metadata_schema_url_call: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSetExtensionCall'
 
 _table_metadata: str = 'table_catalog, table_schema, table_name, table_type, remarks'
-_table_table: str = 'pg_catalog.svv_tables'
+_table_table: str = 'pg_catalog.svv_tables ' \
+                    'where table_schema not in (\'pg_toast\', \'pg_internal\', \'catalog_history\', ' \
+                    '\'pg_catalog\', \'information_schema\') and table_schema not like \'pg_temp_%\''
 _table_order_by: str = 'table_catalog, table_schema, table_name'
 
-_table_metadata_all: str = 'database_name, schema_name, table_name, table_type, table_acl, remarks'
-_table_table_all: str = 'pg_catalog.svv_all_tables'
+_table_metadata_all: str = \
+    'database_name, schema_name, table_name, table_type, table_owner, table_creation_time, view_ddl'
+_table_table_all: str = 'pg_catalog.svv_all_tables ' \
+                        'where schema_name not in (\'pg_toast\', \'pg_internal\', \'catalog_history\', ' \
+                        '\'pg_catalog\', \'information_schema\') and schema_name not like \'pg_temp_%\''
 _table_order_by_all: str = 'database_name, schema_name, table_name'
 
 _table_metadata_redshift: str = 'database_name, schema_name, table_name, table_type, table_acl, remarks'
-_table_table_redshift: str = 'pg_catalog.svv_redshift_tables'
+_table_table_redshift: str = 'pg_catalog.svv_redshift_tables ' \
+                             'where schema_name not in (\'pg_toast\', \'pg_internal\', \'catalog_history\', ' \
+                             '\'pg_catalog\', \'information_schema\') and schema_name not like \'pg_temp_%\''
 _table_order_by_redshift: str = 'database_name, schema_name, table_name'
 
 _table_metadata_external: str = \
@@ -39,7 +46,9 @@ _table_select_external: str = \
     '(current_database())::character varying(128) as databasename, ' \
     'schemaname, tablename, location, input_format, output_format, serialization_lib, ' \
     'serde_parameters, compressed, parameters, tabletype'
-_table_table_external: str = 'pg_catalog.svv_external_tables'
+_table_table_external: str = 'pg_catalog.svv_external_tables ' \
+                             'where schemaname not in (\'pg_toast\', \'pg_internal\', \'catalog_history\', ' \
+                             '\'pg_catalog\', \'information_schema\') and schemaname not like \'pg_temp_%\''
 _table_order_by_external: str = 'schemaname, tablename'
 
 _table_metadata_info: str = \
@@ -50,19 +59,25 @@ _table_select_info: str = \
     'database, schema, table_id, "table", encoded, diststyle, sortkey1, max_varchar, sortkey1_enc, sortkey_num, ' \
     'size, pct_used, empty, unsorted, stats_off, tbl_rows, skew_sortkey1, skew_rows, estimated_visible_rows, ' \
     'risk_event, vacuum_sort_benefit'
-_table_table_info: str = 'pg_catalog.svv_table_info'
+_table_table_info: str = 'pg_catalog.svv_table_info ' \
+                         'where schema not in (\'pg_toast\', \'pg_internal\', \'catalog_history\', ' \
+                         '\'pg_catalog\', \'information_schema\') and schema not like \'pg_temp_%\''
 _table_order_by_info: str = 'database, schema, "table"'
 
 _column_metadata: str = \
     'database_name, schema_name, table_name, column_name, ordinal_position, column_default, is_nullable, ' \
     'data_type, character_maximum_length, numeric_precision, numeric_scale, remarks'
-_column_table: str = 'pg_catalog.svv_all_columns'
+_column_table: str = 'pg_catalog.svv_all_columns ' \
+                     'where schema_name not in (\'pg_toast\', \'pg_internal\', \'catalog_history\', ' \
+                     '\'pg_catalog\', \'information_schema\') and schema_name not like \'pg_temp_%\''
 _column_order_by: str = f'database_name, schema_name, table_name, ordinal_position'
 
 _column_metadata_redshift: str = \
     'database_name, schema_name, table_name, column_name, ordinal_position, ' \
     'data_type, column_default, is_nullable, encoding, distkey, sortkey, column_acl, remarks'
-_column_table_redshift: str = 'pg_catalog.svv_redshift_columns'
+_column_table_redshift: str = 'pg_catalog.svv_redshift_columns ' \
+                              'where schema_name not in (\'pg_toast\', \'pg_internal\', \'catalog_history\', ' \
+                              '\'pg_catalog\', \'information_schema\') and schema_name not like \'pg_temp_%\''
 _column_order_by_redshift: str = f'database_name, schema_name, table_name, ordinal_position'
 
 _column_metadata_external: str = \
@@ -70,7 +85,9 @@ _column_metadata_external: str = \
 _column_select_external: str = \
     '(current_database())::character varying(128) as databasename, ' \
     'schemaname, tablename, columnname, external_type, columnnum, part_key, is_nullable'
-_column_table_external: str = 'pg_catalog.svv_external_columns'
+_column_table_external: str = 'pg_catalog.svv_external_columns ' \
+                              'where schemaname not in (\'pg_toast\', \'pg_internal\', \'catalog_history\', ' \
+                              '\'pg_catalog\', \'information_schema\') and schemaname not like \'pg_temp_%\''
 _column_order_by_external: str = f'schemaname, tablename, columnnum'
 
 _function_metadata: str = 'database_name, schema_name, function_name, function_type, argument_type, result_type, prosrc'
@@ -99,7 +116,25 @@ FunctionMetadataNamedtuple = namedtuple('FunctionMetadataNamedtuple', _function_
 CallMetadataNamedtuple = namedtuple('CallMetadataNamedtuple', _call_metadata)
 
 MetadataNamedtuple_QUERY = f'select {_table_metadata} from {_table_table} order by {_table_order_by}'
-MetadataNamedtupleAll_QUERY = f'select {_table_metadata_all} from {_table_table_all} order by {_table_order_by_all}'
+
+MetadataNamedtupleAll_QUERY = '''
+select (current_database())::character varying(128)             as database_name
+     , n.nspname                                                as schema_name
+     , c.relname                                                as table_name
+     , case when c.relkind = 'v' then 'VIEW' else 'TABLE' end   as table_type
+     , pg_get_userbyid(c.relowner)                              as table_owner
+     , relcreationtime                                          as table_creation_time
+     , case
+           when relkind = 'v' then
+               coalesce(pg_get_viewdef(c.reloid, true), '') end as view_ddl
+from pg_catalog.pg_class_info c
+         left join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+where c.relkind in ('r', 'v')
+  and n.nspname not like 'pg_temp_%'
+  and n.nspname not in ('pg_toast', 'pg_internal', 'catalog_history', 'pg_catalog', 'information_schema')
+order by n.nspname, c.relname
+'''
+
 MetadataNamedtupleRedshift_QUERY = \
     f'select {_table_metadata_redshift} from {_table_table_redshift} order by {_table_order_by_redshift}'
 MetadataNamedtupleExternal_QUERY = \
@@ -116,17 +151,49 @@ ColumnMetadataNamedtupleExternal_QUERY = \
 
 # PG_PROC_INFO
 FunctionMetadataNamedtuple_QUERY = \
-    "select database_name, schema_name, function_name, function_type, argument_type, result_type, " \
-    "(select prosrc from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on " \
-    "p.pronamespace = n.oid and prosrc is not null " \
-    "where nspname = f.schema_name and proname = f.function_name and " \
-    "nspname not in ('pg_toast', 'pg_internal', 'catalog_history', 'pg_catalog', 'information_schema') and " \
-    "nspname not like 'pg_temp_%') prosrc " \
-    "from pg_catalog.svv_redshift_functions as f " \
-    "where schema_name not in ('pg_toast', 'pg_internal', 'catalog_history', 'pg_catalog', 'information_schema') and " \
-    "schema_name not like 'pg_temp_%'"
+    ''
+# "select database_name, schema_name, function_name, function_type, argument_type, result_type, " \
+# "(select prosrc from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on " \
+# "p.pronamespace = n.oid and prosrc is not null " \
+# "where nspname = f.schema_name and proname = f.function_name and " \
+# "nspname not in ('pg_toast', 'pg_internal', 'catalog_history', 'pg_catalog', 'information_schema') and " \
+# "nspname not like 'pg_temp_%') prosrc " \
+# "from pg_catalog.svv_redshift_functions as f " \
+# "where schema_name not in ('pg_toast', 'pg_internal', 'catalog_history', 'pg_catalog', 'information_schema') and " \
+# "schema_name not like 'pg_temp_%'"
 
 CallMetadataNamedtuple_QUERY = f'select {_call_select} from {_call_table} order by {_call_order_by}'
+
+_column_metadata_integer: str = \
+    'database_name, schema_name, table_name, column_name, ordinal_position, ' \
+    'low_value, high_value, mean_value, nulls_count, unique_count'
+_column_select_integer: str = ''
+_column_table_integer: str = ''
+_column_order_by_integer: str = ''
+
+ColumnMetadataNamedtupleInteger = namedtuple('ColumnMetadataNamedtupleInteger', _column_metadata_integer)
+
+FieldStat_UNION = 'union all'
+FieldStat_ORDERBY = 'order by database_name, schema_name, table_name, ordinal_position'
+
+FieldStatInteger_FORMAT = '''
+select current_database()::character varying(128) as database_name
+     , {schemaname}::character varying(128)       as schema_name
+     , {tablename}::character varying(128)        as table_name
+     , {columnname}::character varying(128)       as column_name
+     , {ordinalposition}::oid                     as ordinal_position
+     , min({column})::bigint                      as low_value
+     , max({column})::bigint                      as high_value
+     , avg({column})::bigint                      as mean_value
+     , (count(*) - count({column}))::bigint       as nulls_count
+     , count(distinct {column})::bigint           as unique_count
+from {table}
+'''
+
+FieldStatInteger_QUERY = \
+    ' select current_database()::varchar(128),{schemaname},{tablename},{columnname},{ordinalposition},' \
+    'min({column})::bigint,max({column})::bigint,avg({column})::bigint,' \
+    'count(*)-count({column})::bigint,count(distinct {column})::bigint from {table}\n'
 
 
 class MetadataTable:
@@ -148,6 +215,7 @@ class MetadataColumn:
     base: ColumnMetadataNamedtuple = None
     redshift: ColumnMetadataNamedtupleRedshift = None
     external: ColumnMetadataNamedtupleExternal = None
+    integer: ColumnMetadataNamedtupleInteger = None
 
 
 class MetadataTables:
@@ -207,10 +275,12 @@ class MetadataTables:
 class MetadataColumns:
     items: list[MetadataColumn]
 
-    def __init__(self, columns: list[tuple], columns_redshift: list[tuple], columns_external: list[tuple]) -> None:
+    def __init__(self, columns: list[tuple], columns_redshift: list[tuple], columns_external: list[tuple],
+                 columns_integer: list[tuple]) -> None:
         ms: list[MetadataColumn] = []
         redshift_index: int = 0
         external_index: int = 0
+        integer_index: int = 0
 
         for column in columns:
             m: MetadataColumn = MetadataColumn()
@@ -226,7 +296,8 @@ class MetadataColumns:
                     ColumnMetadataNamedtupleRedshift(*columns_redshift[redshift_index])
                 if mredshift.database_name == m.database_name and \
                         mredshift.schema_name == m.schema_name and \
-                        mredshift.table_name == m.table_name:
+                        mredshift.table_name == m.table_name and \
+                        mredshift.ordinal_position == m.ordinal_position:
                     m.redshift = mredshift
                     redshift_index += 1
 
@@ -239,5 +310,15 @@ class MetadataColumns:
                         mexternal.columnnum == m.ordinal_position:
                     m.external = mexternal
                     external_index += 1
+
+            if integer_index < len(columns_integer):
+                minteger: ColumnMetadataNamedtupleInteger = \
+                    ColumnMetadataNamedtupleInteger(*columns_integer[integer_index])
+                if minteger.database_name == m.database_name and \
+                        minteger.schema_name == m.schema_name and \
+                        minteger.table_name == m.table_name and \
+                        minteger.ordinal_position == m.ordinal_position:
+                    m.integer = minteger
+                    integer_index += 1
 
         self.items = ms

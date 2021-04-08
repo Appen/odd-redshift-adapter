@@ -1,4 +1,4 @@
-from odd_contract.models import DataSetField, DataSetFieldType, DataSetFieldStat
+from odd_contract.models import DataSetField, DataSetFieldType, DataSetFieldStat, IntegerFieldStat
 from adapter import MetadataColumn, _data_set_field_metadata_schema_url, \
     _data_set_field_metadata_schema_url_redshift, _data_set_field_metadata_schema_url_external
 from adapter.type import TYPES_SQL_TO_ODD
@@ -24,6 +24,7 @@ def _map_column(mcolumn: MetadataColumn,
     _append_metadata_extension(dsf.metadata, _data_set_field_metadata_schema_url, mcolumn.base)
     _append_metadata_extension(dsf.metadata, _data_set_field_metadata_schema_url_redshift, mcolumn.redshift)
     _append_metadata_extension(dsf.metadata, _data_set_field_metadata_schema_url_external, mcolumn.external)
+    # _append_metadata_extension(dsf.metadata, _data_set_field_metadata_schema_url_integer, mcolumn.integer)
 
     dsf.parent_field_oddrn = parent_oddrn
 
@@ -38,8 +39,15 @@ def _map_column(mcolumn: MetadataColumn,
     dsf.default_value = mcolumn.base.column_default
     dsf.description = mcolumn.base.remarks
 
-    dsf.stats = DataSetFieldStat()
-    # DataSetFieldStat
+    if dsf.type.type == 'TYPE_INTEGER':
+        dsf.stats = DataSetFieldStat()
+        dsf.stats.integer_stats = IntegerFieldStat()
+        dsf.stats.integer_stats.low_value = mcolumn.integer.low_value
+        dsf.stats.integer_stats.high_value = mcolumn.integer.high_value
+        dsf.stats.integer_stats.mean_value = mcolumn.integer.mean_value
+        # dsf.stats.integer_stats.median_value = mcolumn.integer.median_value
+        dsf.stats.integer_stats.nulls_count = mcolumn.integer.nulls_count
+        dsf.stats.integer_stats.unique_count = mcolumn.integer.unique_count
 
     result.append(dsf)
     return result

@@ -1,32 +1,24 @@
 import os
-from logging.config import dictConfig
+import logging
 from flask import Response
 from odd_contract import init_flask_app, init_controller
 from adapter.adapter import create_adapter
 from app.cache import Cache
 from app.controller import Controller
 from app.scheduler import Scheduler
+from config import log_env_vars
 
-dictConfig({
-    'version': 1,
-    'formatters': {'default': {
-        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
-    }},
-    'handlers': {'wsgi': {
-        'class': 'logging.StreamHandler',
-        'stream': 'ext://flask.logging.wsgi_errors_stream',
-        'formatter': 'default'
-    }},
-    'root': {
-        'level': 'INFO',
-        'handlers': ['wsgi']
-    }
-})
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+)
 
 
 def create_app(conf):
     app = init_flask_app()
+
     app.config.from_object(conf)
+    log_env_vars(app.config)
 
     app.add_url_rule('/health', 'healthcheck', lambda: Response(status=200))
 

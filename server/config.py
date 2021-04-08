@@ -1,4 +1,5 @@
 import os
+import logging
 from typing import Any
 
 
@@ -35,3 +36,16 @@ class DevelopmentConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     FLASK_DEBUG = True
+
+
+def log_env_vars(config: dict):
+    logging.info('Environment variables:')
+    logging.info(f'ODD_DATA_SOURCE_NAME={config["ODD_DATA_SOURCE_NAME"]}')
+    logging.info(f'ODD_DATA_SOURCE={config["ODD_DATA_SOURCE"]}')
+    logging.info(f'PGHOST={config["ODD_HOST"]}')
+    logging.info(f'PGPORT={config["ODD_PORT"]}')
+    logging.info(f'PGDATABASE={config["ODD_DATABASE"]}')
+    logging.info(f'PGUSER={config["ODD_USER"]}')
+    if config["ODD_PASSWORD"] != '':
+        logging.info('PGPASSWORD=***')
+    logging.info(f'SCHEDULER_INTERVAL_MINUTES={config["SCHEDULER_INTERVAL_MINUTES"]}')

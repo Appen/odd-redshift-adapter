@@ -57,11 +57,11 @@ components:
             updated_at:
               type: string
               format: date-time
-              example: 2021-12-31T23:59:59UTC
+              example: 2021-03-25T06:12:13.488486
             created_at:
               type: string
               format: date-time
-              example: 2021-12-31T23:59:59UTC
+              example: 2021-03-25T06:12:13.488486
             dataset:
               $ref: '#/components/schemas/DataSet'
             data_transformer:
@@ -105,13 +105,6 @@ components:
           enum:
             - DATASET_TABLE
             - DATASET_VIEW
-            - DATASET_MATERIALIZED_VIEW
-            - DATASET_EXTERNAL_TABLE
-            - DATASET_EXTERNAL_VIEW
-            - DATASET_EXTERNAL_MATERIALIZED_VIEW
-            - DATASET_EXTERNAL_UNKNOWN
-            - DATASET_SHARED_TABLE
-            - DATASET_TEMPORARY_TABLE
             - DATASET_FILE
             - DATASET_FEATURE_GROUP
             - DATASET_TOPIC
@@ -287,19 +280,6 @@ components:
         - nulls_count
         - unique_count
 
-    DataSetStat:
-      type: object
-      properties:
-        rows_count:
-          type: integer
-          format: int64
-        rows_unique:
-          type: integer
-          format: int64
-      required:
-        - rows_count
-        - rows_unique
-
     DataSetField:
       allOf:
         - $ref: '#/components/schemas/BaseObject'
@@ -335,6 +315,7 @@ components:
             - TYPE_BOOLEAN
             - TYPE_CHAR
             - TYPE_DATETIME
+            - TYPE_TIME
             - TYPE_STRUCT
             - TYPE_BINARY
             - TYPE_LIST
@@ -373,9 +354,7 @@ components:
             - DATATRANSFORMER_JOB
             - DATATRANSFORMER_EXPERIMENT
             - DATATRANSFORMER_ML_MODEL_TRAINING
-            - DATATRANSFORMER_STORED_PROCEDURE
-            - DATATRANSFORMER_FUNCTION
-            - DATATRANSFORMER_AGGREGATED_FUNCTION
+            - DATATRANSFORMER_VIEW
             - DATATRANSFORMER_UNKNOWN
       required:
         - inputs

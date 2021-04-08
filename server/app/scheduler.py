@@ -21,13 +21,15 @@ class Scheduler:
 
     def __retrieve_data_entities(self):
         datasets = self.__adapter.get_datasets()
-        data_transformers = self.__adapter.get_data_transformers()
-        data_transformer_runs = self.__adapter.get_data_transformer_runs()
+        # data_transformers = self.__adapter.get_data_transformers()
+        # data_transformer_runs = self.__adapter.get_data_transformer_runs()
         self.__cache.cache_data_entities(
             datasets,
-            data_transformers,
-            data_transformer_runs)
-        logging.info(f'Put {len(datasets)} Datasets, '
-                     f'{len(data_transformers)} DataTransformers, '
-                     f'{len(data_transformer_runs)} DataTransformerRuns '
+            [], [])
+            # data_transformers,
+            # data_transformer_runs)
+        # logging.info(f'Put {len(datasets)} Datasets, '
+                     # f'{len(data_transformers)} DataTransformers, '
+                     # f'{len(data_transformer_runs)} DataTransformerRuns '
+        logging.info(f'Put {len(datasets)} Datasets '
                      f'DataEntities to cache from database')
