@@ -1,7 +1,5 @@
 from odd_contract.models import DataEntity, DataSet, DataTransformer
-from adapter import MetadataTables, MetadataColumns, MetadataColumn, \
-    _data_set_metadata_schema_url, _data_set_metadata_schema_url_all, _data_set_metadata_schema_url_redshift, \
-    _data_set_metadata_schema_url_external, _data_set_metadata_schema_url_info
+from adapter import MetadataTables, MetadataColumns, MetadataColumn, _data_set_metadata_schema_url_info
 from adapter.column import _map_column
 from adapter.metadata import _append_metadata_extension
 from adapter.type import TABLE_TYPES_SQL_TO_ODD, FUNCTION_TYPES_SQL_TO_ODD
@@ -30,10 +28,6 @@ def _map_table(data_source_oddrn: str, mtables: MetadataTables, mcolumns: Metada
         data_entity.owner = mtable.all.table_owner
 
         data_entity.metadata = []
-        # _append_metadata_extension(data_entity.metadata, _data_set_metadata_schema_url, mtable.base)
-        # _append_metadata_extension(data_entity.metadata, _data_set_metadata_schema_url_all, mtable.all)
-        # _append_metadata_extension(data_entity.metadata, _data_set_metadata_schema_url_redshift, mtable.redshift)
-        # _append_metadata_extension(data_entity.metadata, _data_set_metadata_schema_url_external, mtable.external)
         _append_metadata_extension(data_entity.metadata, _data_set_metadata_schema_url_info, mtable.info)
 
         if mtable.all.table_creation_time is not None:
@@ -69,10 +63,6 @@ def _map_table(data_source_oddrn: str, mtables: MetadataTables, mcolumns: Metada
             # data_entity.data_transformer.source_code_url = None
             data_entity.data_transformer.sql = mtable.all.view_ddl
 
-            # if mfunction.argument_type is not None:
-            #     data_entity.data_transformer.inputs = mfunction.argument_type.split(', ')
-            # if mfunction.result_type is not None:
-            #     data_entity.data_transformer.outputs = mfunction.result_type.split(', ')
             data_entity.data_transformer.inputs = ''
             data_entity.data_transformer.outputs = ''
 

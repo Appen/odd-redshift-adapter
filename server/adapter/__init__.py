@@ -147,21 +147,6 @@ ColumnMetadataNamedtupleRedshift_QUERY = \
 ColumnMetadataNamedtupleExternal_QUERY = \
     f'select {_column_select_external} from {_column_table_external} order by {_column_order_by_external}'
 
-# FunctionMetadataNamedtuple_QUERY = f'select {_function_metadata} from {_function_table} order by {_function_order_by}'
-
-# PG_PROC_INFO
-FunctionMetadataNamedtuple_QUERY = \
-    ''
-# "select database_name, schema_name, function_name, function_type, argument_type, result_type, " \
-# "(select prosrc from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on " \
-# "p.pronamespace = n.oid and prosrc is not null " \
-# "where nspname = f.schema_name and proname = f.function_name and " \
-# "nspname not in ('pg_toast', 'pg_internal', 'catalog_history', 'pg_catalog', 'information_schema') and " \
-# "nspname not like 'pg_temp_%') prosrc " \
-# "from pg_catalog.svv_redshift_functions as f " \
-# "where schema_name not in ('pg_toast', 'pg_internal', 'catalog_history', 'pg_catalog', 'information_schema') and " \
-# "schema_name not like 'pg_temp_%'"
-
 CallMetadataNamedtuple_QUERY = f'select {_call_select} from {_call_table} order by {_call_order_by}'
 
 _column_metadata_integer: str = \

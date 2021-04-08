@@ -7,12 +7,10 @@ from adapter import \
     MetadataNamedtuple_QUERY, MetadataNamedtupleAll_QUERY, MetadataNamedtupleRedshift_QUERY, \
     MetadataNamedtupleExternal_QUERY, MetadataNamedtupleInfo_QUERY, \
     ColumnMetadataNamedtuple_QUERY, ColumnMetadataNamedtupleRedshift_QUERY, \
-    ColumnMetadataNamedtupleExternal_QUERY, FunctionMetadataNamedtuple_QUERY, CallMetadataNamedtuple_QUERY, \
+    ColumnMetadataNamedtupleExternal_QUERY, \
     ColumnMetadataNamedtuple, FieldStat_UNION, FieldStat_ORDERBY, FieldStatInteger_QUERY, FieldStatInteger_FORMAT
-# from adapter.call import _map_call
-# from adapter.function import _map_function
 from adapter.table import _map_table
-from adapter.type import TABLE_TYPES_SQL_TO_ODD, TYPES_SQL_TO_ODD
+from adapter.type import TYPES_SQL_TO_ODD
 from app.abstract_adapter import AbstractAdapter
 
 
@@ -81,31 +79,9 @@ class RedshiftAdapter(AbstractAdapter):
         return []
 
     def get_data_transformers(self) -> list[DataEntity]:
-        # try:
-        #     self.__connect()
-        #
-        #     functions = self.__execute(FunctionMetadataNamedtuple_QUERY)
-        #
-        #     return _map_function(self.get_data_source_oddrn(), functions)
-        # except Exception:
-        #     logging.error('Failed to load metadata for tables')
-        #     logging.exception(Exception)
-        # finally:
-        #     self.__disconnect()
         return []
 
     def get_data_transformer_runs(self) -> list[DataEntity]:
-        # try:
-        #     self.__connect()
-        #
-        #     calls = self.__execute(CallMetadataNamedtuple_QUERY)
-        #
-        #     return _map_call(self.get_data_source_oddrn(), calls)
-        # except Exception:
-        #     logging.error('Failed to load metadata for tables')
-        #     logging.exception(Exception)
-        # finally:
-        #     self.__disconnect()
         return []
 
     def __get_cloud_prefix(self) -> str:
