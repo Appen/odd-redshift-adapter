@@ -7,18 +7,23 @@ _METADATA_SCHEMA_URL_PREFIX: str = \
     'https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/' \
     'extensions/redshift.json#/definitions/Redshift'
 
-_data_set_metadata_schema_url: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSetExtension'
+_data_set_metadata_schema_url: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSetExtensionBase'
 _data_set_metadata_schema_url_all: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSetExtensionAll'
 _data_set_metadata_schema_url_redshift: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSetExtensionRedshift'
 _data_set_metadata_schema_url_external: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSetExtensionExternal'
-_data_set_metadata_schema_url_info: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSetExtensionInfo'
+_data_set_metadata_schema_url_info: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSetExtension'
 
-_data_set_field_metadata_schema_url: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSetFieldExtension'
-_data_set_field_metadata_schema_url_redshift: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSetFieldExtensionRedshift'
+_data_set_field_metadata_schema_url: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSetFieldExtensionBase'
+_data_set_field_metadata_schema_url_redshift: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSetFieldExtension'
 _data_set_field_metadata_schema_url_external: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSetFieldExtensionExternal'
 
 _data_set_metadata_schema_url_function: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSetExtensionFunction'
 _data_set_metadata_schema_url_call: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSetExtensionCall'
+
+_data_set_metadata_excluded_keys_info: set = {'database', 'schema', 'table'}
+
+_data_set_field_metadata_keys_info_redshift: set = {
+    'database_name', 'schema_name', 'table_name', 'column_name', 'column_default', 'is_nullable', 'remarks'}
 
 _table_metadata: str = 'table_catalog, table_schema, table_name, table_type, remarks'
 _table_table: str = 'pg_catalog.svv_tables ' \
@@ -56,7 +61,8 @@ _table_metadata_info: str = \
     'size, pct_used, empty, unsorted, stats_off, tbl_rows, skew_sortkey1, skew_rows, estimated_visible_rows, ' \
     'risk_event, vacuum_sort_benefit'
 _table_select_info: str = \
-    'database, schema, table_id, "table", encoded, diststyle, sortkey1, max_varchar, sortkey1_enc, sortkey_num, ' \
+    'database, schema, table_id, "table", encoded, diststyle, ' \
+    'sortkey1, max_varchar, trim(sortkey1_enc) sortkey1_enc, sortkey_num, ' \
     'size, pct_used, empty, unsorted, stats_off, tbl_rows, skew_sortkey1, skew_rows, estimated_visible_rows, ' \
     'risk_event, vacuum_sort_benefit'
 _table_table_info: str = 'pg_catalog.svv_table_info ' \
@@ -149,37 +155,6 @@ ColumnMetadataNamedtupleExternal_QUERY = \
 
 CallMetadataNamedtuple_QUERY = f'select {_call_select} from {_call_table} order by {_call_order_by}'
 
-_column_metadata_integer: str = \
-    'database_name, schema_name, table_name, column_name, ordinal_position, ' \
-    'low_value, high_value, mean_value, nulls_count, unique_count'
-_column_select_integer: str = ''
-_column_table_integer: str = ''
-_column_order_by_integer: str = ''
-
-ColumnMetadataNamedtupleInteger = namedtuple('ColumnMetadataNamedtupleInteger', _column_metadata_integer)
-
-FieldStat_UNION = 'union all'
-FieldStat_ORDERBY = 'order by database_name, schema_name, table_name, ordinal_position'
-
-FieldStatInteger_FORMAT = '''
-select current_database()::character varying(128) as database_name
-     , {schemaname}::character varying(128)       as schema_name
-     , {tablename}::character varying(128)        as table_name
-     , {columnname}::character varying(128)       as column_name
-     , {ordinalposition}::oid                     as ordinal_position
-     , min({column})::bigint                      as low_value
-     , max({column})::bigint                      as high_value
-     , avg({column})::bigint                      as mean_value
-     , (count(*) - count({column}))::bigint       as nulls_count
-     , count(distinct {column})::bigint           as unique_count
-from {table}
-'''
-
-FieldStatInteger_QUERY = \
-    ' select current_database()::varchar(128),{schemaname},{tablename},{columnname},{ordinalposition},' \
-    'min({column})::bigint,max({column})::bigint,avg({column})::bigint,' \
-    'count(*)-count({column})::bigint,count(distinct {column})::bigint from {table}\n'
-
 
 class MetadataTable:
     database_name: str
@@ -200,7 +175,6 @@ class MetadataColumn:
     base: ColumnMetadataNamedtuple = None
     redshift: ColumnMetadataNamedtupleRedshift = None
     external: ColumnMetadataNamedtupleExternal = None
-    integer: ColumnMetadataNamedtupleInteger = None
 
 
 class MetadataTables:
@@ -260,12 +234,10 @@ class MetadataTables:
 class MetadataColumns:
     items: list[MetadataColumn]
 
-    def __init__(self, columns: list[tuple], columns_redshift: list[tuple], columns_external: list[tuple],
-                 columns_integer: list[tuple]) -> None:
+    def __init__(self, columns: list[tuple], columns_redshift: list[tuple], columns_external: list[tuple]) -> None:
         ms: list[MetadataColumn] = []
         redshift_index: int = 0
         external_index: int = 0
-        integer_index: int = 0
 
         for column in columns:
             m: MetadataColumn = MetadataColumn()
@@ -295,15 +267,5 @@ class MetadataColumns:
                         mexternal.columnnum == m.ordinal_position:
                     m.external = mexternal
                     external_index += 1
-
-            if integer_index < len(columns_integer):
-                minteger: ColumnMetadataNamedtupleInteger = \
-                    ColumnMetadataNamedtupleInteger(*columns_integer[integer_index])
-                if minteger.database_name == m.database_name and \
-                        minteger.schema_name == m.schema_name and \
-                        minteger.table_name == m.table_name and \
-                        minteger.ordinal_position == m.ordinal_position:
-                    m.integer = minteger
-                    integer_index += 1
 
         self.items = ms

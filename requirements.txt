@@ -4,4 +4,4 @@ flask==1.1.2
 apscheduler==3.7.0
 pytz==2021.1
 psycopg2-binary==2.8.6
-odd-contract-dev==0.0.22
+odd-contract-dev==0.0.28

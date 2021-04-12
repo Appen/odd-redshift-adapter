@@ -1,5 +1,6 @@
 from odd_contract.models import DataEntity, DataSet, DataTransformer
-from adapter import MetadataTables, MetadataColumns, MetadataColumn, _data_set_metadata_schema_url_info
+from adapter import MetadataTables, MetadataColumns, MetadataColumn, _data_set_metadata_schema_url_info, \
+    _data_set_metadata_excluded_keys_info
 from adapter.column import _map_column
 from adapter.metadata import _append_metadata_extension
 from adapter.type import TABLE_TYPES_SQL_TO_ODD, FUNCTION_TYPES_SQL_TO_ODD
@@ -27,12 +28,15 @@ def _map_table(data_source_oddrn: str, mtables: MetadataTables, mcolumns: Metada
         data_entity.name = table_name
         data_entity.owner = mtable.all.table_owner
 
-        data_entity.metadata = []
-        _append_metadata_extension(data_entity.metadata, _data_set_metadata_schema_url_info, mtable.info)
+        if mtable.all.table_type == 'TABLE':  # data_entity.dataset.subtype == 'DATASET_TABLE'
+            data_entity.metadata = []
+            # it is for full tables only
+            _append_metadata_extension(data_entity.metadata, _data_set_metadata_schema_url_info, mtable.info,
+                                       _data_set_metadata_excluded_keys_info)
 
         if mtable.all.table_creation_time is not None:
+            # data_entity.updated_at = mtable.all.table_creation_time.isoformat()
             data_entity.created_at = mtable.all.table_creation_time.isoformat()
-            data_entity.updated_at = mtable.all.table_creation_time.isoformat()
 
         # Dataset
         data_entity.dataset = DataSet()
@@ -68,7 +72,7 @@ def _map_table(data_source_oddrn: str, mtables: MetadataTables, mcolumns: Metada
 
             data_entity.data_transformer.subtype = FUNCTION_TYPES_SQL_TO_ODD[mtable.base.table_type] \
                 if mtable.base.table_type in FUNCTION_TYPES_SQL_TO_ODD \
-                else 'DATATRANSFORMER_JOB'  # DATATRANSFORMER_UNKNOWN
+                else 'DATATRANSFORMER_UNKNOWN'
 
         # DatasetField
         while column_index < len(mcolumns.items):  # exclude right only rows
@@ -77,7 +81,7 @@ def _map_table(data_source_oddrn: str, mtables: MetadataTables, mcolumns: Metada
             if mcolumn.database_name == table_catalog and \
                     mcolumn.schema_name == table_schema and \
                     mcolumn.table_name == table_name:
-                data_entity.dataset.field_list.extend(_map_column(mcolumn, schema_oddrn, table_oddrn))
+                data_entity.dataset.field_list.extend(_map_column(mcolumn, data_entity.owner, table_oddrn))
                 column_index += 1
             else:
                 break
