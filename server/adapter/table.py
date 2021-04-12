@@ -35,7 +35,7 @@ def _map_table(data_source_oddrn: str, mtables: MetadataTables, mcolumns: Metada
                                        _data_set_metadata_excluded_keys_info)
 
         if mtable.all.table_creation_time is not None:
-            # data_entity.updated_at = mtable.all.table_creation_time.isoformat()
+            data_entity.updated_at = mtable.all.table_creation_time.isoformat()
             data_entity.created_at = mtable.all.table_creation_time.isoformat()
 
         # Dataset
@@ -67,8 +67,8 @@ def _map_table(data_source_oddrn: str, mtables: MetadataTables, mcolumns: Metada
             # data_entity.data_transformer.source_code_url = None
             data_entity.data_transformer.sql = mtable.all.view_ddl
 
-            data_entity.data_transformer.inputs = ''
-            data_entity.data_transformer.outputs = ''
+            data_entity.data_transformer.inputs = []
+            data_entity.data_transformer.outputs = []
 
             data_entity.data_transformer.subtype = FUNCTION_TYPES_SQL_TO_ODD[mtable.base.table_type] \
                 if mtable.base.table_type in FUNCTION_TYPES_SQL_TO_ODD \
