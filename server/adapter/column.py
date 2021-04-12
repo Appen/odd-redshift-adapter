@@ -27,7 +27,8 @@ def _map_column(mcolumn: MetadataColumn, owner: str, table_oddrn: str,
     dsf.type = DataSetFieldType()
     data_type: str = mcolumn.base.data_type
     dsf.type.type = TYPES_SQL_TO_ODD[data_type] if data_type in TYPES_SQL_TO_ODD else 'TYPE_UNKNOWN'
-    dsf.type.logical_type = mcolumn.base.data_type
+    dsf.type.logical_type = mcolumn.redshift.data_type if mcolumn.redshift.data_type is not None \
+        else mcolumn.base.data_type
     dsf.type.is_nullable = True if mcolumn.base.is_nullable == 'YES' else False
 
     # dsf.is_key = bool(is_key)
