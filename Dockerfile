@@ -15,4 +15,4 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 8080
 WORKDIR /srv/app/
 
-ENTRYPOINT gunicorn --bind 0.0.0.0:8080 --workers=1 wsgi:application
+ENTRYPOINT gunicorn --bind 0.0.0.0:8080 --timeout=300 --workers=10 wsgi:application

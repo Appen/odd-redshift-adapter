@@ -22,5 +22,4 @@ class Scheduler:
     def __retrieve_data_entities(self):
         datasets = self.__adapter.get_datasets()
         self.__cache.cache_data_entities(datasets, [], [])
-        logging.info(f'Put {len(datasets)} Datasets '
-                     f'DataEntities to cache from database')
+        logging.info(f'Put {len(datasets)} Datasets DataEntities to cache from database')

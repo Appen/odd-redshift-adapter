@@ -23,24 +23,3 @@ class AbstractAdapter(ABC):
     @abstractmethod
     def get_data_transformer_runs(self) -> list[DataEntity]:
         raise NotImplementedError
-
-# def init_adapter(controller: AbstractAdapter):
-#     AdapterHolder.init_adapter(controller)
-#
-#
-# def get_adapter() -> AbstractAdapter:
-#     return AdapterHolder.get_adapter()
-#
-#
-# class AdapterHolder:
-#     __adapter: AbstractAdapter = None
-#
-#     @classmethod
-#     def init_adapter(cls, controller: AbstractAdapter):
-#         cls.__adapter = controller
-#
-#     @classmethod
-#     def get_adapter(cls) -> AbstractAdapter:
-#         if cls.__adapter is None:
-#             raise RuntimeError('ODD adapter has never been initialized')
-#         return cls.__adapter

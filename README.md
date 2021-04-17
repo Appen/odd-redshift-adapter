@@ -105,7 +105,7 @@ Format ODDRN:
   format: f'{dataset_oddr}/columns/{column_name}'  
   example: "//aws/123456789012/redshift/odd-redshift-adapter.c0mxpzchxkqz.us-west-2.redshift.amazonaws.com/databases/oddadapter/schemas/public/tables/event/columns/eventid"
 - BaseObject.oddrn for DataTransformer  
-  format: f'{data_source_oddr}/databases/{catalog_name}/schemas/{schema_name}/functions/{function_name}'  
+  format: f'{data_source_oddr}/databases/{catalog_name}/schemas/{schema_name}/tables/{view_name}'  
   example: "//aws/123456789012/redshift/odd-redshift-adapter.c0mxpzchxkqz.us-west-2.redshift.amazonaws.com/databases/oddadapter/schemas/public/tables/event_all"
 
 

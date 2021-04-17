@@ -22,7 +22,7 @@ _data_set_metadata_schema_url_call: str = _METADATA_SCHEMA_URL_PREFIX + 'DataSet
 
 _data_set_metadata_excluded_keys_info: set = {'database', 'schema', 'table'}
 
-_data_set_field_metadata_keys_info_redshift: set = {'database_name', 'schema_name', 'table_name', 'column_name',
+_data_set_field_metadata_excluded_keys_redshift: set = {'database_name', 'schema_name', 'table_name', 'column_name',
                                                     'data_type', 'column_default', 'is_nullable', 'remarks'}
 
 _table_metadata: str = 'table_catalog, table_schema, table_name, table_type, remarks'

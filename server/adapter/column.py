@@ -1,6 +1,6 @@
 from odd_contract.models import DataSetField, DataSetFieldType
 from adapter import MetadataColumn, _data_set_field_metadata_schema_url_redshift, \
-    _data_set_field_metadata_keys_info_redshift
+    _data_set_field_metadata_excluded_keys_redshift
 from adapter.type import TYPES_SQL_TO_ODD
 from adapter.metadata import _append_metadata_extension
 
@@ -20,7 +20,7 @@ def _map_column(mcolumn: MetadataColumn, owner: str, table_oddrn: str,
 
     dsf.metadata = []
     _append_metadata_extension(dsf.metadata, _data_set_field_metadata_schema_url_redshift, mcolumn.redshift,
-                               _data_set_field_metadata_keys_info_redshift)
+                               _data_set_field_metadata_excluded_keys_redshift)
 
     # dsf.parent_field_oddrn = parent_oddrn
 
