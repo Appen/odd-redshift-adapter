@@ -35,4 +35,4 @@ jobs:
     steps:
       - uses: azure/setup-kubectl@v1
       - run: |
-          kubectl -n demo delete pods -l adapter=${{ github.event.repository.name }} ||:
+          kubectl -n demo rollout restart deployment ${{ github.event.repository.name }} ||:
