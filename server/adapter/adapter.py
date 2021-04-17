@@ -45,11 +45,13 @@ class RedshiftAdapter(AbstractAdapter):
                 self.__execute(ColumnMetadataNamedtupleRedshift_QUERY),
                 self.__execute(ColumnMetadataNamedtupleExternal_QUERY))
 
+            logging.info(f'Load {len(mtables.items)} Datasets DataEntities from database')
+            self.__disconnect()
+
             return _map_table(self.get_data_source_oddrn(), mtables, mcolumns)
         except Exception:
             logging.error('Failed to load metadata for tables')
             logging.exception(Exception)
-        finally:
             self.__disconnect()
         return []
 
