@@ -45,8 +45,8 @@ class RedshiftAdapter(AbstractAdapter):
                 self.__execute(ColumnMetadataNamedtupleRedshift_QUERY),
                 self.__execute(ColumnMetadataNamedtupleExternal_QUERY))
 
-            logging.info(f'Load {len(mtables.items)} Datasets DataEntities from database')
             self.__disconnect()
+            logging.info(f'Load {len(mtables.items)} Datasets DataEntities from database')
 
             return _map_table(self.get_data_source_oddrn(), mtables, mcolumns)
         except Exception:
