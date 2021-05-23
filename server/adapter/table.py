@@ -3,7 +3,7 @@ from adapter import MetadataTables, MetadataColumns, MetadataColumn, _data_set_m
     _data_set_metadata_excluded_keys_info
 from adapter.column import _map_column
 from adapter.metadata import _append_metadata_extension
-from adapter.type import TABLE_TYPES_SQL_TO_ODD, FUNCTION_TYPES_SQL_TO_ODD
+from adapter.type import TYPES_SQL_TO_ODD
 from app.oddrn import generate_table_oddrn, generate_schema_oddrn
 
 
@@ -38,13 +38,16 @@ def _map_table(data_source_oddrn: str, mtables: MetadataTables, mcolumns: Metada
             data_entity.updated_at = mtable.all.table_creation_time.isoformat()
             data_entity.created_at = mtable.all.table_creation_time.isoformat()
 
+        if mtable.base is not None:
+            data_entity.description = mtable.base.remarks
+
+        data_entity.type = TYPES_SQL_TO_ODD[mtable.base.table_type] \
+            if mtable.base.table_type in TYPES_SQL_TO_ODD else 'UNKNOWN' 
+
         # Dataset
         data_entity.dataset = DataSet()
 
         data_entity.dataset.parent_oddrn = schema_oddrn
-
-        if mtable.base is not None:
-            data_entity.dataset.description = mtable.base.remarks
 
         if mtable.info is not None:
             if mtable.info.estimated_visible_rows is not None:
@@ -53,26 +56,17 @@ def _map_table(data_source_oddrn: str, mtables: MetadataTables, mcolumns: Metada
                 if mtable.info.tbl_rows is not None:
                     data_entity.dataset.rows_number = int(mtable.info.tbl_rows)
 
-        data_entity.dataset.subtype = TABLE_TYPES_SQL_TO_ODD[mtable.base.table_type] \
-            if mtable.base.table_type in TABLE_TYPES_SQL_TO_ODD else 'DATASET_TABLE'  # DATASET_UNKNOWN
-
         data_entity.dataset.field_list = []
 
         # DataTransformer
-        if mtable.all.table_type == 'VIEW':  # data_entity.dataset.subtype == 'DATASET_VIEW'
+        if mtable.all.table_type == 'VIEW':
             data_entity.data_transformer = DataTransformer()
 
-            if mtable.base is not None:
-                data_entity.data_transformer.description = mtable.base.remarks
             # data_entity.data_transformer.source_code_url = None
             data_entity.data_transformer.sql = mtable.all.view_ddl
 
             data_entity.data_transformer.inputs = []
             data_entity.data_transformer.outputs = []
-
-            data_entity.data_transformer.subtype = FUNCTION_TYPES_SQL_TO_ODD[mtable.base.table_type] \
-                if mtable.base.table_type in FUNCTION_TYPES_SQL_TO_ODD \
-                else 'DATATRANSFORMER_UNKNOWN'
 
         # DatasetField
         while column_index < len(mcolumns.items):  # exclude right only rows
