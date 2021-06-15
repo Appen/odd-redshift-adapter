@@ -34,7 +34,7 @@ jobs:
           repository: provectus/environment-state
           token: ${{ env.MASKED_ODD_GIT_TOKEN }}
       - run: |
-          sed -i "s/tag:.*/tag:ci-${GITHUB_SHA::6}/" redshift-adapter.yaml
+          sed -i "s/tag:.*/tag: ci-${GITHUB_SHA::6}/" redshift-adapter.yaml
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
