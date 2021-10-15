@@ -26,7 +26,7 @@ class RedshiftAdapter:
         self.__password = config['ODD_PASSWORD']
 
         self._data_source = f"postgresql://{self.__user}:{self.__password}@{self.__host}:{self.__port}/{self.__database}?connect_timeout=10"
-        self.__oddrn_generator = RedshiftGenerator(host_settings=f"{self.__host}:{self.__port}", databases=self.__database)
+        self.__oddrn_generator = RedshiftGenerator(host_settings=f"{self.__host}", databases=self.__database)
 
     def get_data_source_oddrn(self) -> str:
         return self.__oddrn_generator.get_data_source_oddrn()
