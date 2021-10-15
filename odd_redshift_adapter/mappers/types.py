@@ -50,75 +50,74 @@
 # https://docs.aws.amazon.com/redshift/latest/dg/r_SUPER_type.html
 
 # https://docs.aws.amazon.com/redshift/latest/dg/c_unsupported-postgresql-datatypes.html
-TYPES_SQL_TO_ODD = {
+from odd_contract.models import Type, DataEntityType
 
-    'smallint': 'TYPE_INTEGER',
-    'integer': 'TYPE_INTEGER',
-    'bigint': 'TYPE_INTEGER',
-    'decimal': 'TYPE_NUMBER',
-    'real': 'TYPE_NUMBER',
-    'double precision': 'TYPE_NUMBER',
-    'boolean': 'TYPE_BOOLEAN',
-    'char': 'TYPE_CHAR',
-    'varchar': 'TYPE_STRING',
-    'date': 'TYPE_DATETIME',
-    'timestamp': 'TYPE_DATETIME',
-    'timestamptz': 'TYPE_DATETIME',
-    'geometry': 'TYPE_BINARY',
-    'hllsketch': 'TYPE_BINARY',
-    'time': 'TYPE_TIME',
-    'timetz': 'TYPE_TIME',
+TYPES_SQL_TO_ODD: dict[str, Type] = {
 
-    'bit': 'TYPE_BINARY',  # BITOID recheck
-    # 'boolean': 'TYPE_BOOLEAN',  # BOOLOID
-    'character': 'TYPE_CHAR',  # BPCHAROID recheck
+    'smallint': Type.TYPE_INTEGER,
+    'integer': Type.TYPE_INTEGER,
+    'bigint': Type.TYPE_INTEGER,
+    'decimal': Type.TYPE_NUMBER,
+    'real': Type.TYPE_NUMBER,
+    'double precision': Type.TYPE_NUMBER,
+    'boolean': Type.TYPE_BOOLEAN,
+    'char': Type.TYPE_CHAR,
+    'varchar': Type.TYPE_STRING,
+    'date': Type.TYPE_DATETIME,
+    'timestamp': Type.TYPE_DATETIME,
+    'timestamptz': Type.TYPE_DATETIME,
+    'geometry': Type.TYPE_BINARY,
+    'hllsketch': Type.TYPE_BINARY,
+    'time': Type.TYPE_TIME,
+    'timetz': Type.TYPE_TIME,
 
-    # 'real': 'TYPE_NUMBER',  # FLOAT4OID
-    # 'double precision': 'TYPE_NUMBER',  # FLOAT8OID
-    # 'smallint': 'TYPE_INTEGER',  # INT2OID
-    # 'integer': 'TYPE_INTEGER',  # INT4OID
-    # 'bigint': 'TYPE_NUMBER',  # INT8OID recheck
-    'numeric': 'TYPE_NUMBER',  # NUMERICOID
+    'bit': Type.TYPE_BINARY,  # BITOID recheck
+    # 'boolean': Type.TYPE_BOOLEAN,  # BOOLOID
+    'character': Type.TYPE_CHAR,  # BPCHAROID recheck
 
-    'interval': 'TYPE_DURATION',  # INTERVALOID recheck
-    # 'time': 'TYPE_TIME',  # TIMEOID, TIMETZOID
-    'time without time zone': 'TYPE_TIME',  # TIMEOID
-    'time with time zone': 'TYPE_TIME',  # TIMETZOID
-    # 'timestamp': 'TYPE_DATETIME',  # TIMESTAMPOID, TIMESTAMPTZOID
-    'timestamp without time zone': 'TYPE_DATETIME',  # TIMESTAMPOID
-    'timestamp with time zone': 'TYPE_DATETIME',  # TIMESTAMPTZOID
+    # 'real': Type.TYPE_NUMBER,  # FLOAT4OID
+    # 'double precision': Type.TYPE_NUMBER,  # FLOAT8OID
+    # 'smallint': Type.TYPE_INTEGER,  # INT2OID
+    # 'integer': Type.TYPE_INTEGER,  # INT4OID
+    # 'bigint': Type.TYPE_NUMBER,  # INT8OID recheck
+    'numeric': Type.TYPE_NUMBER,  # NUMERICOID
 
-    'bit varying': 'TYPE_BINARY',  # VARBITOID recheck
-    'character varying': 'TYPE_STRING',  # VARCHAROID
+    'interval': Type.TYPE_DURATION,  # INTERVALOID recheck
+    # 'time': Type.TYPE_TIME,  # TIMEOID, TIMETZOID
+    'time without time zone': Type.TYPE_TIME,  # TIMEOID
+    'time with time zone': Type.TYPE_TIME,  # TIMETZOID
+    # 'timestamp': Type.TYPE_DATETIME,  # TIMESTAMPOID, TIMESTAMPTZOID
+    'timestamp without time zone': Type.TYPE_DATETIME,  # TIMESTAMPOID
+    'timestamp with time zone': Type.TYPE_DATETIME,  # TIMESTAMPTZOID
 
-    'ARRAY': 'TYPE_LIST',  # view information_schema.columns recheck
-    'USER-DEFINED': 'TYPE_STRUCT'  # view information_schema.columns recheck
+    'bit varying': Type.TYPE_BINARY,  # VARBITOID recheck
+    'character varying': Type.TYPE_STRING,  # VARCHAROID
+
+    'ARRAY': Type.TYPE_LIST,  # view information_schema.columns recheck
+    'USER-DEFINED': Type.TYPE_STRUCT,  # view information_schema.columns recheck
 }
 
 # views, base tables, external tables, and shared tables
 # TABLE, VIEW, MATERIALIZED VIEW, or " " empty string that represents no information.
-TYPES_SQL_TO_ODD = {
-    'BASE TABLE': 'TABLE',
-    'EXTERNAL TABLE': 'TABLE',
-    'SHARED TABLE': 'TABLE',
-    'VIEW': 'VIEW',
-    'MATERIALIZED VIEW': 'VIEW',
-    'EXTERNAL VIEW': 'VIEW',
-    'EXTERNAL MATERIALIZED VIEW': 'VIEW',
-    'VIEW': 'VIEW',
-    'MATERIALIZED VIEW': 'VIEW',
-    'EXTERNAL VIEW': 'VIEW',
-    'EXTERNAL MATERIALIZED VIEW': 'VIEW'
+TABLE_TYPES_SQL_TO_ODD: dict[str, DataEntityType] = {
+    'BASE TABLE': DataEntityType.TABLE,
+    'EXTERNAL TABLE': DataEntityType.TABLE,
+    'SHARED TABLE': DataEntityType.TABLE,
+    'VIEW': DataEntityType.VIEW,
+    'MATERIALIZED VIEW': DataEntityType.VIEW,
+    'EXTERNAL VIEW': DataEntityType.VIEW,
+    'EXTERNAL MATERIALIZED VIEW': DataEntityType.VIEW,
+
     # '': 'DATASET_UNKNOWN'
 
-    # 'LOCAL TEMPORARY': 'DATASET_TABLE',
-    # 'BASE TABLE': 'DATASET_TABLE',
-    # 'EXTERNAL TABLE': 'DATASET_EXTERNAL_TABLE',
-    # 'EXTERNAL VIEW': 'DATASET_EXTERNAL_VIEW',
-    # 'EXTERNAL MATERIALIZED VIEW': 'DATASET_EXTERNAL_MATERIALIZED_VIEW',
-    # 'SHARED TABLE': 'DATASET_SHARED_TABLE',
-    # 'LOCAL TEMPORARY': 'DATASET_TEMPORARY_TABLE',
-    # 'VIEW': 'DATASET_VIEW',
-    # 'MATERIALIZED VIEW': 'DATASET_MATERIALIZED_VIEW',
+    # 'LOCAL TEMPORARY': Type.DATASET_TABLE,
+    # 'BASE TABLE': Type.DATASET_TABLE,
+    # 'EXTERNAL TABLE': Type.DATASET_EXTERNAL_TABLE,
+    # 'EXTERNAL VIEW': Type.DATASET_EXTERNAL_VIEW,
+    # 'EXTERNAL MATERIALIZED VIEW': Type.DATASET_EXTERNAL_MATERIALIZED_VIEW,
+    # 'SHARED TABLE': Type.DATASET_SHARED_TABLE,
+    # 'LOCAL TEMPORARY': Type.DATASET_TEMPORARY_TABLE,
+    # 'VIEW': Type.DATASET_VIEW,
+    # 'MATERIALIZED VIEW': Type.DATASET_MATERIALIZED_VIEW,
     # '': 'DATASET_UNKNOWN'
 }
