@@ -37,30 +37,11 @@ Cache refreshing interval (minutes), default 60:
 - SCHEDULER_INTERVAL_MINUTES=60
 
 ODD Redshift adapter used PostgreSQL driver and setting for it:
-- ODD_DATA_SOURCE_NAME=odd-redshift-adapter.c4oxusiab5jk.eu-central-1.redshift.amazonaws.com
-- ODD_DATA_SOURCE=postgresql://
-- PGHOST=odd-redshift-adapter.c4oxusiab5jk.eu-central-1.redshift.amazonaws.com
-- PGPORT=5439
-- PGDATABASE=oddadapter
-- PGUSER=oddadapter
-- PGPASSWORD=odd-adapter-password
-
-ODD_DATA_SOURCE_NAME is last part of DataEntityList.data_source_oddrn. By default, PGHOST.
-
-ODD_DATA_SOURCE is full or part of Connection String. By default, "postgresql://".  
-There are two accepted formats for ODD_DATA_SOURCE: plain keyword = value strings and URIs.  
-Plain keyword = value strings example:  
-```host=...redshift.amazonaws.com port=5439 dbname=oddadapter connect_timeout=10```  
-The general form for a connection URI is:  
-```postgresql://[user[:password]@][host][:port][,...][/dbname][?param1=value1&...]```  
-```postgresql://oddadapter:odd-adapter-password@odd-redshift-adapter.c4oxusiab5jk.eu-central-1.redshift.amazonaws.com:5439/oddadapter?connect_timeout=10```
-
-Or you can use additional variables:  
-Redshift endpoint host (host keyword) - PGHOST=odd-redshift-adapter.c4oxusiab5jk.eu-central-1.redshift.amazonaws.com  
-Redshift endpoint/database port (port keyword) - PGPORT=5439  
-Redshift database name (dbname keyword) - PGDATABASE=oddadapter  
-Username - PGUSER=oddadapter  
-Password - PGPASSWORD=odd-adapter-password
+- REDSHIFT_HOST=...redshift.amazonaws.com
+- REDSHIFT_PORT=5439
+- REDSHIFT_DATABASE=oddadapter
+- REDSHIFT_USER=oddadapter
+- REDSHIFT_PASSWORD=odd-adapter-password
 
 More details see https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING
 
@@ -91,22 +72,23 @@ Mapping details and examples see below.
 BaseObject and DataEntity is base components for other metadata components.
 DataEntityList is list all types of DataEntity and it has data_source_oddrn.
 
+# //redshift/host/redshift-cluster-lumin.c0mxpzchxkqz.us-west-2.redshift.amazonaws.com:5439/databases/dev/schemas/dev_union/tables/billing_report_active_users/columns/unionname
 Format ODDRN:
 - DataEntityList.data_source_oddrn  
-  format: f'//aws/123456789012/redshift/{ODD_DATA_SOURCE_NAME}'  
-  example: "//aws/123456789012/redshift/odd-redshift-adapter.c0mxpzchxkqz.us-west-2.redshift.amazonaws.com"
+  format: f'//redshift/host/{REDSHIFT_HOST}:{REDSHIFT_PORT}/databases/{REDSHIFT_DATABASE}'  
+  example: "//redshift/odd-redshift-adapter.c0mxpzchxkqz.us-west-2.redshift.amazonaws.com:5439/databases/oddadapter"
 - DataSet.parent_oddrn  
-  format: f'{data_source_oddr}/databases/{catalog_name}/schemas/{schema_name}'  
-  example: "//aws/123456789012/redshift/odd-redshift-adapter.c0mxpzchxkqz.us-west-2.redshift.amazonaws.com/databases/oddadapter/schemas/smith"
+  format: f'//redshift/host/{REDSHIFT_HOST}:{REDSHIFT_PORT}/databases/{REDSHIFT_DATABASE}/schemas/{schema_name}'
+  example: "//redshift/odd-redshift-adapter.c0mxpzchxkqz.us-west-2.redshift.amazonaws.com:5439/databases/oddadapter/schemas/smith"
 - BaseObject.oddrn for DataSet, DataSetField.parent_field_oddrn  
-  format: f'{data_source_oddr}/databases/{catalog_name}/schemas/{schema_name}/tables/{table_name}'  
-  example: "//aws/123456789012/redshift/odd-redshift-adapter.c0mxpzchxkqz.us-west-2.redshift.amazonaws.com/databases/oddadapter/schemas/public/tables/event"
+  format: f'//redshift/host/{REDSHIFT_HOST}:{REDSHIFT_PORT}/databases/{REDSHIFT_DATABASE}/schemas/{schema_name}/tables/{table_name}'
+  example: "//redshift/odd-redshift-adapter.c0mxpzchxkqz.us-west-2.redshift.amazonaws.com:5439/databases/oddadapter/schemas/public/tables/event"
 - BaseObject.oddrn for DataSetField  
-  format: f'{dataset_oddr}/columns/{column_name}'  
-  example: "//aws/123456789012/redshift/odd-redshift-adapter.c0mxpzchxkqz.us-west-2.redshift.amazonaws.com/databases/oddadapter/schemas/public/tables/event/columns/eventid"
+  format: f'//redshift/host/{REDSHIFT_HOST}:{REDSHIFT_PORT}/databases/{REDSHIFT_DATABASE}/schemas/{schema_name}/tables/{table_name}/columns/{column_name}'
+  example: "//redshift/odd-redshift-adapter.c0mxpzchxkqz.us-west-2.redshift.amazonaws.com:5439/databases/oddadapter/schemas/public/tables/event/columns/eventid"
 - BaseObject.oddrn for DataTransformer  
-  format: f'{data_source_oddr}/databases/{catalog_name}/schemas/{schema_name}/tables/{view_name}'  
-  example: "//aws/123456789012/redshift/odd-redshift-adapter.c0mxpzchxkqz.us-west-2.redshift.amazonaws.com/databases/oddadapter/schemas/public/tables/event_all"
+  format: f'//redshift/host/{REDSHIFT_HOST}:{REDSHIFT_PORT}/databases/{REDSHIFT_DATABASE}/schemas/{schema_name}/tables/{view_name}'
+  example: "//redshift/odd-redshift-adapter.c0mxpzchxkqz.us-west-2.redshift.amazonaws.com:5439/databases/oddadapter/schemas/public/tables/event_all"
 
 
 Format DataEntity.created_at, DataEntity.updated_at and other values of datetime type:  
