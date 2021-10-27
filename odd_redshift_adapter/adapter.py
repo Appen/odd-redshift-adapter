@@ -1,7 +1,7 @@
 import logging
 
 import psycopg2
-from odd_contract.models import DataEntity
+from odd_models.models import DataEntity
 from oddrn_generator import RedshiftGenerator
 
 from .mappers import (

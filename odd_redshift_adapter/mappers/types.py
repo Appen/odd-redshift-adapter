@@ -50,7 +50,7 @@
 # https://docs.aws.amazon.com/redshift/latest/dg/r_SUPER_type.html
 
 # https://docs.aws.amazon.com/redshift/latest/dg/c_unsupported-postgresql-datatypes.html
-from odd_contract.models import Type, DataEntityType
+from odd_models.models import Type, DataEntityType
 
 TYPES_SQL_TO_ODD: dict[str, Type] = {
 

@@ -1,5 +1,5 @@
 from collections import namedtuple
-from odd_contract.models import MetadataExtension
+from odd_models.models import MetadataExtension
 
 from odd_redshift_adapter.mappers import (
     MetadataNamedtuple, MetadataNamedtupleAll,
