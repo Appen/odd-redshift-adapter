@@ -72,7 +72,6 @@ Mapping details and examples see below.
 BaseObject and DataEntity is base components for other metadata components.
 DataEntityList is list all types of DataEntity and it has data_source_oddrn.
 
-# //redshift/host/redshift-cluster-lumin.c0mxpzchxkqz.us-west-2.redshift.amazonaws.com:5439/databases/dev/schemas/dev_union/tables/billing_report_active_users/columns/unionname
 Format ODDRN:
 - DataEntityList.data_source_oddrn  
   format: f'//redshift/host/{REDSHIFT_HOST}:{REDSHIFT_PORT}/databases/{REDSHIFT_DATABASE}'  

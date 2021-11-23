@@ -31,7 +31,7 @@ class RedshiftAdapter:
     def get_data_source_oddrn(self) -> str:
         return self.__oddrn_generator.get_data_source_oddrn()
 
-    def get_datasets(self) -> list[DataEntity]:
+    def get_data_entities(self) -> list[DataEntity]:
         try:
             self.__connect()
 
@@ -56,15 +56,6 @@ class RedshiftAdapter:
             logging.exception(e)
             self.__disconnect()
         return []
-
-    def get_data_transformers(self) -> list[DataEntity]:
-        return []
-
-    def get_data_transformer_runs(self) -> list[DataEntity]:
-        return []
-
-    def __query(self, columns: str, table: str, order_by: str) -> list[tuple]:
-        return self.__execute(f'select {columns} from {table} order by {order_by}')
 
     def __execute(self, query: str) -> list[tuple]:
         self.__cursor.execute(query)
